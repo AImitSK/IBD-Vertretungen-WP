@@ -39,6 +39,76 @@
     box-sizing: border-box;
 }
 
+/* SVG Reset - wichtig für Theme-Kompatibilität */
+.ibd-vertretungen-wrapper svg {
+    width: 16px;
+    height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    fill: none;
+    stroke: currentColor;
+}
+
+.ibd-vertretungen-wrapper .ibd-search-icon {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.ibd-vertretungen-wrapper .ibd-search-clear svg {
+    width: 18px;
+    height: 18px;
+    max-width: 18px;
+    max-height: 18px;
+}
+
+.ibd-vertretungen-wrapper .ibd-accordion-icon {
+    width: 18px;
+    height: 18px;
+    max-width: 18px;
+    max-height: 18px;
+}
+
+.ibd-vertretungen-wrapper .ibd-btn svg {
+    width: 16px;
+    height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+}
+
+.ibd-vertretungen-wrapper .ibd-btn-small svg {
+    width: 14px;
+    height: 14px;
+    max-width: 14px;
+    max-height: 14px;
+}
+
+.ibd-vertretungen-wrapper .ibd-btn-icon svg {
+    width: 14px;
+    height: 14px;
+    max-width: 14px;
+    max-height: 14px;
+}
+
+.ibd-vertretungen-wrapper .ibd-contact-email svg,
+.ibd-vertretungen-wrapper .ibd-contact-phone svg {
+    width: 14px;
+    height: 14px;
+    max-width: 14px;
+    max-height: 14px;
+}
+
+.ibd-vertretungen-wrapper .ibd-card-website svg {
+    width: 16px;
+    height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+}
+
 /* Search Bar */
 .ibd-search-bar {
     margin-bottom: 20px;
