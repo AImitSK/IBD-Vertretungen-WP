@@ -79,7 +79,6 @@ final class IBD_Vertretungen {
      */
     private function init_hooks() {
         add_action('init', [$this, 'load_textdomain']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
 
         // Initialize components
@@ -121,17 +120,26 @@ final class IBD_Vertretungen {
 
     /**
      * Enqueue frontend assets
+     * Called directly when shortcode is rendered (works with all page builders)
      */
-    public function enqueue_frontend_assets() {
-        global $post;
-
-        // Only load on pages with our shortcode
-        if (!is_a($post, 'WP_Post') || !has_shortcode($post->post_content, 'ibd_vertretungen')) {
+    public static function enqueue_frontend_assets() {
+        // Prevent loading twice
+        static $loaded = false;
+        if ($loaded) {
             return;
         }
+        $loaded = true;
 
         $options = get_option('ibd_vertretungen_options', []);
         $google_maps_api_key = $options['google_maps_api_key'] ?? '';
+
+        // Plugin CSS - load first
+        wp_enqueue_style(
+            'ibd-vertretungen-css',
+            IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/css/frontend.css',
+            [],
+            IBD_VERTRETUNGEN_VERSION
+        );
 
         // Google Maps API
         if ($google_maps_api_key) {
@@ -142,24 +150,25 @@ final class IBD_Vertretungen {
                 null,
                 true
             );
+
+            // Plugin JavaScript (depends on Google Maps)
+            wp_enqueue_script(
+                'ibd-vertretungen-js',
+                IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/js/app.js',
+                ['google-maps-api'],
+                IBD_VERTRETUNGEN_VERSION,
+                true
+            );
+        } else {
+            // Plugin JavaScript (without Google Maps dependency)
+            wp_enqueue_script(
+                'ibd-vertretungen-js',
+                IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/js/app.js',
+                [],
+                IBD_VERTRETUNGEN_VERSION,
+                true
+            );
         }
-
-        // Plugin CSS
-        wp_enqueue_style(
-            'ibd-vertretungen-css',
-            IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/css/frontend.css',
-            [],
-            IBD_VERTRETUNGEN_VERSION
-        );
-
-        // Plugin JavaScript
-        wp_enqueue_script(
-            'ibd-vertretungen-js',
-            IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/js/app.js',
-            ['google-maps-api'],
-            IBD_VERTRETUNGEN_VERSION,
-            true
-        );
 
         // Localize script
         wp_localize_script('ibd-vertretungen-js', 'ibdVertretungen', [

@@ -25,6 +25,9 @@ class IBD_Shortcode {
      * @return string
      */
     public function render_shortcode($atts) {
+        // Load CSS and JS assets (works with Avada and all page builders)
+        IBD_Vertretungen::enqueue_frontend_assets();
+
         $atts = shortcode_atts([
             'show_search' => 'true',
             'show_filter' => 'true',
