@@ -28,22 +28,20 @@ $country_count = count($v['all_countries']);
             </div>
         <?php endif; ?>
 
-        <div class="ibd-card-title-wrap">
-            <h4 class="ibd-card-title"><?php echo esc_html($v['title']); ?></h4>
+        <h4 class="ibd-card-title"><?php echo esc_html($v['title']); ?></h4>
 
-            <div class="ibd-card-address">
-                <?php if (!empty($v['address']['street'])): ?>
-                    <span class="ibd-address-street"><?php echo esc_html($v['address']['street']); ?></span>
-                <?php endif; ?>
-                <?php if (!empty($v['address']['zip']) || !empty($v['address']['city'])): ?>
-                    <span class="ibd-address-city">
-                        <?php echo esc_html(trim($v['address']['zip'] . ' ' . $v['address']['city'])); ?>
-                    </span>
-                <?php endif; ?>
-                <?php if (!empty($v['address']['country'])): ?>
-                    <span class="ibd-address-country"><?php echo esc_html($v['address']['country']); ?></span>
-                <?php endif; ?>
-            </div>
+        <div class="ibd-card-address">
+            <?php if (!empty($v['address']['street'])): ?>
+                <span class="ibd-address-street"><?php echo esc_html($v['address']['street']); ?></span>
+            <?php endif; ?>
+            <?php if (!empty($v['address']['zip']) || !empty($v['address']['city'])): ?>
+                <span class="ibd-address-city">
+                    <?php echo esc_html(trim($v['address']['zip'] . ' ' . $v['address']['city'])); ?>
+                </span>
+            <?php endif; ?>
+            <?php if (!empty($v['address']['country'])): ?>
+                <span class="ibd-address-country"><?php echo esc_html($v['address']['country']); ?></span>
+            <?php endif; ?>
         </div>
     </div>
 

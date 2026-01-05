@@ -55,11 +55,6 @@ if (!$ibd_css_loaded && file_exists($css_file)) {
         </div>
 
         <div class="ibd-cards-container">
-            <div class="ibd-cards-header">
-                <h3 class="ibd-cards-title"><?php _e('Unsere Vertretungen', 'ibd-vertretungen'); ?></h3>
-                <span id="ibd-results-count" class="ibd-results-count"></span>
-            </div>
-
             <div id="ibd-cards-list" class="ibd-cards-list">
                 <?php if (empty($vertretungen)): ?>
                     <div class="ibd-no-results">
@@ -70,21 +65,6 @@ if (!$ibd_css_loaded && file_exists($css_file)) {
                         <?php include IBD_VERTRETUNGEN_PLUGIN_DIR . 'templates/card-template.php'; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
-            </div>
-
-            <div class="ibd-cards-footer">
-                <a href="<?php echo esc_url(IBD_PDF_Export::get_download_url(0)); ?>"
-                   class="ibd-btn ibd-btn-secondary"
-                   target="_blank">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    <?php _e('Alle als PDF', 'ibd-vertretungen'); ?>
-                </a>
             </div>
         </div>
     </div>
