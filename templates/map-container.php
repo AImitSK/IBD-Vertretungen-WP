@@ -11,6 +11,16 @@ if (!defined('ABSPATH')) {
 
 $show_search = ($atts['show_search'] === 'true');
 $show_filter = ($atts['show_filter'] === 'true');
+
+// Load CSS inline (guarantees it works with Avada and all page builders)
+$css_file = IBD_VERTRETUNGEN_PLUGIN_DIR . 'assets/css/frontend.css';
+static $ibd_css_loaded = false;
+if (!$ibd_css_loaded && file_exists($css_file)) {
+    $ibd_css_loaded = true;
+    echo '<style id="ibd-vertretungen-inline-css">';
+    readfile($css_file);
+    echo '</style>';
+}
 ?>
 
 <div class="ibd-vertretungen-wrapper" style="--ibd-primary: <?php echo esc_attr($primary_color); ?>;">
