@@ -48,6 +48,38 @@ class IBD_GitHub_Updater {
 
         // Add "Check for updates" link
         add_filter('plugin_action_links_' . $this->slug, [$this, 'add_action_links']);
+
+        // Handle manual update check
+        add_action('admin_init', [$this, 'handle_force_check']);
+    }
+
+    /**
+     * Handle force update check request
+     */
+    public function handle_force_check() {
+        if (!isset($_GET['ibd_check_update'])) {
+            return;
+        }
+
+        if (!current_user_can('update_plugins')) {
+            return;
+        }
+
+        // Verify nonce
+        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'ibd_check_update')) {
+            return;
+        }
+
+        // Clear caches
+        delete_transient($this->transient_name);
+        delete_site_transient('update_plugins');
+
+        // Add admin notice
+        add_action('admin_notices', function() {
+            echo '<div class="notice notice-success is-dismissible"><p>';
+            echo esc_html__('Update-Prüfung abgeschlossen. Falls ein Update verfügbar ist, wird es jetzt angezeigt.', 'ibd-vertretungen');
+            echo '</p></div>';
+        });
     }
 
     /**
@@ -245,17 +277,6 @@ class IBD_GitHub_Updater {
         return $links;
     }
 
-    /**
-     * Force update check
-     */
-    public static function force_check() {
-        if (isset($_GET['ibd_check_update']) && wp_verify_nonce($_GET['_wpnonce'], 'ibd_check_update')) {
-            delete_transient('ibd_github_update_' . md5(plugin_basename(IBD_VERTRETUNGEN_PLUGIN_DIR . 'ibd-vertretungen.php')));
-            delete_site_transient('update_plugins');
-            wp_safe_redirect(admin_url('plugins.php?plugin_status=all'));
-            exit;
-        }
-    }
 }
 
 // Simple Parsedown fallback (minimal markdown parser)
@@ -294,6 +315,3 @@ if (!class_exists('Parsedown')) {
         }
     }
 }
-
-// Handle force check
-add_action('admin_init', ['IBD_GitHub_Updater', 'force_check']);
