@@ -63,6 +63,14 @@ final class IBD_Vertretungen {
 
         if (is_admin()) {
             require_once IBD_VERTRETUNGEN_PLUGIN_DIR . 'admin/class-settings.php';
+
+            // GitHub Updater - prüft auf Updates von GitHub Releases
+            require_once IBD_VERTRETUNGEN_PLUGIN_DIR . 'includes/class-github-updater.php';
+            new IBD_GitHub_Updater(
+                __FILE__,
+                'AImitSK',           // GitHub Username
+                'IBD-Vertretungen-WP' // GitHub Repository Name
+            );
         }
     }
 
