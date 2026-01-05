@@ -3,7 +3,7 @@
  * Plugin Name: IBD Vertretungen
  * Plugin URI: https://github.com/AImitSK/IBD-Vertretungen-WP
  * Description: Interaktive Google Maps Karte mit Firmenvertretungen für IBD Wickeltechnik
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: IBD Wickeltechnik
  * Author URI: https://ibd-wt.de
  * Text Domain: ibd-vertretungen
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('IBD_VERTRETUNGEN_VERSION', '1.0.2');
+define('IBD_VERTRETUNGEN_VERSION', '1.0.3');
 define('IBD_VERTRETUNGEN_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('IBD_VERTRETUNGEN_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('IBD_VERTRETUNGEN_PLUGIN_BASENAME', plugin_basename(__FILE__));

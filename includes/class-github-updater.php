@@ -44,7 +44,7 @@ class IBD_GitHub_Updater {
         // Hook into WordPress update system
         add_filter('pre_set_site_transient_update_plugins', [$this, 'check_update']);
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
-        add_filter('upgrader_post_install', [$this, 'after_install'], 10, 3);
+        add_filter('upgrader_source_selection', [$this, 'fix_source_dir'], 10, 4);
 
         // Add "Check for updates" link
         add_filter('plugin_action_links_' . $this->slug, [$this, 'add_action_links']);
@@ -229,34 +229,43 @@ class IBD_GitHub_Updater {
     }
 
     /**
-     * After install, rename folder to correct plugin slug
+     * Fix the source directory name from GitHub's format to our plugin slug
      *
-     * @param bool $response
+     * GitHub zipball extracts to: AImitSK-IBD-Vertretungen-WP-abc1234/
+     * We need it to be: IBD-Vertretungen-WP/
+     *
+     * @param string $source Path to upgrade/temp directory
+     * @param string $remote_source Remote file source
+     * @param WP_Upgrader $upgrader
      * @param array $hook_extra
-     * @param array $result
-     * @return array
+     * @return string|WP_Error
      */
-    public function after_install($response, $hook_extra, $result) {
+    public function fix_source_dir($source, $remote_source, $upgrader, $hook_extra) {
         global $wp_filesystem;
 
-        // Check if this is our plugin
+        // Check if this is our plugin being updated
         if (!isset($hook_extra['plugin']) || $hook_extra['plugin'] !== $this->slug) {
-            return $result;
+            return $source;
         }
 
-        $plugin_folder = WP_PLUGIN_DIR . '/' . dirname($this->slug);
+        // Expected correct folder name
+        $correct_folder = trailingslashit($remote_source) . dirname($this->slug);
 
-        // Move to correct folder name
-        $wp_filesystem->move($result['destination'], $plugin_folder);
-        $result['destination'] = $plugin_folder;
+        // If source is already correct, return it
+        if ($source === $correct_folder || $source === trailingslashit($correct_folder)) {
+            return $source;
+        }
 
-        // Clear update transient
-        delete_transient($this->transient_name);
+        // Rename the extracted folder to the correct name
+        if ($wp_filesystem->move($source, $correct_folder, true)) {
+            return trailingslashit($correct_folder);
+        }
 
-        // Reactivate plugin
-        activate_plugin($this->slug);
-
-        return $result;
+        // If move failed, return error
+        return new WP_Error(
+            'rename_failed',
+            __('Das Plugin-Verzeichnis konnte nicht umbenannt werden.', 'ibd-vertretungen')
+        );
     }
 
     /**
