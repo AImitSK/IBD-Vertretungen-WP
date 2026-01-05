@@ -1,0 +1,12 @@
+# GeoJSON-Dateien für Länder-Highlighting
+
+Platziere hier vereinfachte GeoJSON-Dateien mit dem ISO-2 Ländercode als Dateiname:
+- DE.json (Deutschland)
+- AT.json (Österreich)
+- CH.json (Schweiz)
+- etc.
+
+Empfehlung:
+1. GeoJSON von Natural Earth herunterladen
+2. Mit mapshaper.org auf ~2% vereinfachen
+3. Hier ablegen
