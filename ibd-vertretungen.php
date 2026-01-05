@@ -141,34 +141,33 @@ final class IBD_Vertretungen {
             IBD_VERTRETUNGEN_VERSION
         );
 
-        // Google Maps API
+        // Google Maps API - only load if not already loaded by another plugin (e.g., ACF)
+        $maps_deps = [];
         if ($google_maps_api_key) {
-            wp_enqueue_script(
-                'google-maps-api',
-                'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($google_maps_api_key) . '&libraries=places',
-                [],
-                null,
-                true
-            );
-
-            // Plugin JavaScript (depends on Google Maps)
-            wp_enqueue_script(
-                'ibd-vertretungen-js',
-                IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/js/app.js',
-                ['google-maps-api'],
-                IBD_VERTRETUNGEN_VERSION,
-                true
-            );
-        } else {
-            // Plugin JavaScript (without Google Maps dependency)
-            wp_enqueue_script(
-                'ibd-vertretungen-js',
-                IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/js/app.js',
-                [],
-                IBD_VERTRETUNGEN_VERSION,
-                true
-            );
+            // Check if Google Maps is already registered/enqueued
+            if (!wp_script_is('google-maps', 'registered') &&
+                !wp_script_is('google-maps', 'enqueued') &&
+                !wp_script_is('google-maps-api', 'registered') &&
+                !wp_script_is('google-maps-api', 'enqueued')) {
+                wp_enqueue_script(
+                    'ibd-google-maps-api',
+                    'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($google_maps_api_key) . '&callback=Function.prototype',
+                    [],
+                    null,
+                    true
+                );
+                $maps_deps = ['ibd-google-maps-api'];
+            }
         }
+
+        // Plugin JavaScript
+        wp_enqueue_script(
+            'ibd-vertretungen-js',
+            IBD_VERTRETUNGEN_PLUGIN_URL . 'assets/js/app.js',
+            $maps_deps,
+            IBD_VERTRETUNGEN_VERSION,
+            true
+        );
 
         // Localize script
         wp_localize_script('ibd-vertretungen-js', 'ibdVertretungen', [

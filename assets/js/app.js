@@ -16,6 +16,11 @@
         i18n: {}
     };
 
+    // Ensure numeric values
+    config.mapZoom = parseInt(config.mapZoom, 10) || 4;
+    config.mapCenter.lat = parseFloat(config.mapCenter.lat) || 50;
+    config.mapCenter.lng = parseFloat(config.mapCenter.lng) || 10;
+
     // State
     let map = null;
     let markers = [];
@@ -44,9 +49,6 @@
         initSearch();
         initCards();
         initAccordions();
-
-        // Update results count
-        updateResultsCount(vertretungenData.length);
     }
 
     /**
@@ -54,46 +56,57 @@
      */
     function initMap() {
         const mapElement = document.getElementById('ibd-map');
-        if (!mapElement || typeof google === 'undefined') {
-            console.warn('Google Maps not available');
+        if (!mapElement) {
+            console.warn('Map element not found');
+            return;
+        }
+
+        // Wait for Google Maps to be available
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.warn('Google Maps not available yet, retrying...');
+            setTimeout(initMap, 500);
             return;
         }
 
         // Create map
-        map = new google.maps.Map(mapElement, {
-            center: config.mapCenter,
-            zoom: config.mapZoom,
-            styles: getMapStyles(),
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true,
-            zoomControl: true,
-            zoomControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_CENTER
+        try {
+            map = new google.maps.Map(mapElement, {
+                center: { lat: config.mapCenter.lat, lng: config.mapCenter.lng },
+                zoom: config.mapZoom,
+                styles: getMapStyles(),
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_CENTER
+                }
+            });
+
+            // Create info window
+            infoWindow = new google.maps.InfoWindow();
+
+            // Add markers
+            vertretungenData.forEach(v => {
+                if (v.coordinates && v.coordinates.lat && v.coordinates.lng) {
+                    addMarker(v);
+                }
+            });
+
+            // Hide loading overlay
+            const loadingElement = document.getElementById('ibd-map-loading');
+            if (loadingElement) {
+                loadingElement.classList.add('hidden');
             }
-        });
 
-        // Create info window
-        infoWindow = new google.maps.InfoWindow();
-
-        // Add markers
-        vertretungenData.forEach(v => {
-            if (v.coordinates && v.coordinates.lat && v.coordinates.lng) {
-                addMarker(v);
+            // Fit bounds if we have markers
+            if (markers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                markers.forEach(m => bounds.extend(m.getPosition()));
+                map.fitBounds(bounds, { padding: 50 });
             }
-        });
-
-        // Hide loading overlay
-        const loadingElement = document.getElementById('ibd-map-loading');
-        if (loadingElement) {
-            loadingElement.classList.add('hidden');
-        }
-
-        // Fit bounds if we have markers
-        if (markers.length > 0) {
-            const bounds = new google.maps.LatLngBounds();
-            markers.forEach(m => bounds.extend(m.getPosition()));
-            map.fitBounds(bounds, { padding: 50 });
+        } catch (e) {
+            console.error('Error initializing map:', e);
         }
     }
 
